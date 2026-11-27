@@ -1,0 +1,135 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: leadership-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: leadership_app
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d leadership_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  redis:
+    image: redis:7-alpine
+    container_name: leadership-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: leadership-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/6333' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  api:
+    build:
+      context: ./leadershipApp_backend
+      dockerfile: Dockerfile
+    container_name: leadership-api
+    restart: unless-stopped
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/leadership_app
+      REDIS_URL: redis://redis:6379/0
+      VECTOR_DB_URL: http://qdrant:6333
+      SECRET_KEY: leadership-app-development-secret-key-32-chars-long
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-test-openai-key}
+      ALLOWED_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000","http://web:3000"]'
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  worker:
+    build:
+      context: ./leadershipApp_backend
+      dockerfile: Dockerfile
+    container_name: leadership-worker
+    restart: unless-stopped
+    command: python -m app.workers.outbox_daemon
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/leadership_app
+      REDIS_URL: redis://redis:6379/0
+      VECTOR_DB_URL: http://qdrant:6333
+      SECRET_KEY: leadership-app-development-secret-key-32-chars-long
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-test-openai-key}
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    depends_on:
+      api:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./leadershipApp_frontend
+      dockerfile: Dockerfile
+    container_name: leadership-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+      INTERNAL_API_URL: http://api:8000/api/v1
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: leadership-app-frontend-secret-key-32-chars-long
+      NODE_ENV: production
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  db_data:
+  redis_data:
+  qdrant_data:
+

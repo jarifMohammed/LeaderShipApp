@@ -1,0 +1,59 @@
+# Environment & secrets (keep *.example)
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Python / Backend virtualenvs & caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Frontend dependencies & build outputs
+node_modules/
+.next/
+.swc/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS & Editor artifacts
+.DS_Store
+.history/
+
+# External tools & generated analysis outputs
+/gstack/
+graphify-out/
+
+# Excluded audit, roadmap, architecture & deployment markdown docs
+/implicit_state_machines_backend.md
+/implicit_state_machines_frontend.md
+/tier_1_engineering_ai_platform_readiness_roadmap.md
+/Architecture.md
+/HOSTINGER_VPS_DEPLOYMENT_AND_MONITORING.md
+
+# Excluded backend notes, local storage & artifacts
+/leadershipApp_backend/systemdesign.md
+/leadershipApp_backend/docs/
+/leadershipApp_backend/Feedback from the September 21st test.pdf
+/leadershipApp_backend/V2alarry_Backend_API.postman_collection.json
+/leadershipApp_backend/qdrant_storage/
+/leadershipApp_backend/uploads/
+/leadershipApp_backend/eval_report.json
+
+# Excluded frontend notes & artifacts
+/leadershipApp_frontend/tasks/
+/leadershipApp_frontend/agent.md
+/leadershipApp_frontend/assets.md
+/leadershipApp_frontend/Hinkelcrick.postman_collection.json

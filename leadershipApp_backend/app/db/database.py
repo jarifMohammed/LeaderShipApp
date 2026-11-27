@@ -1,0 +1,66 @@
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import make_url
+from sqlalchemy.orm import sessionmaker
+from app.core.config import settings
+
+database_url = make_url(settings.DATABASE_URL)
+async_database_url = database_url.set(
+    drivername="postgresql+asyncpg",
+).difference_update_query(["sslmode", "channel_binding"])
+sync_database_url = database_url.set(drivername="postgresql+psycopg2")
+async_connect_args = {}
+
+if database_url.query.get("sslmode") in {"require", "verify-ca", "verify-full"}:
+    async_connect_args["ssl"] = True
+
+engine = create_async_engine(
+    async_database_url,
+    echo=settings.SQL_ECHO,
+    future=True,
+    connect_args=async_connect_args,
+    pool_pre_ping=True,
+)
+
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+sync_engine = create_engine(
+    sync_database_url,
+    echo=settings.SQL_ECHO,
+    future=True,
+)
+
+SessionLocal = sessionmaker(
+    bind=sync_engine,
+    autocommit=False,
+    autoflush=False,
+)
+
+
+def ensure_schema_compatibility() -> None:
+    """Fail closed when a legacy schema needs an operator-managed migration."""
+    with sync_engine.connect() as connection:
+        current_type = connection.execute(
+            text(
+                """
+                SELECT data_type
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'conversations'
+                  AND column_name = 'user_id'
+                """
+            )
+        ).scalar_one_or_none()
+
+        if current_type in {None, "integer"}:
+            return
+
+        raise RuntimeError(
+            "Unsupported conversations.user_id schema type "
+            f"{current_type!r}. Back up the database and run the reviewed "
+            "operator-managed migration; startup will not modify existing rows."
+        )

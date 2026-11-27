@@ -1,0 +1,43 @@
+import secrets
+
+from app.models.user import User
+from app.utils.security import has_password, verify_password
+from app.utils.jwt import create_access_token
+
+class AuthService: 
+
+    def register_user(self, data):
+        user = User(
+            email=str(data.email).lower(),
+            full_name=data.full_name,
+            hashed_password=has_password(data.password),
+            role="user",
+            password_login_enabled=True,
+        )
+        return user
+    
+    def authenticate_user(self, user, password:str):
+        if not user or not user.is_active:
+            return False
+        
+        if not verify_password(password, user.hashed_password):
+            return False
+        
+        return user
+
+    def register_google_user(self, *, email: str, full_name: str, google_subject: str):
+        return User(
+            email=email.lower(),
+            full_name=full_name,
+            google_subject=google_subject,
+            hashed_password=has_password(secrets.token_urlsafe(32)),
+            password_login_enabled=False,
+        )
+    
+    def create_token(self, user):
+        role = "user" if user.role == "candidate" else user.role
+        return create_access_token(
+            {
+                "sub": str(user.id), "email": user.email, "role": role
+            }
+        )

@@ -1,0 +1,29 @@
+You are an executive coaching analyst. Analyze the following human coaching session transcript between a leadership coach and an executive client.
+
+CRITICAL SPEAKER ATTRIBUTION RULES:
+- Explicitly differentiate between [Coach] dialogue and [Client] dialogue in the transcript.
+- [Coach] prompts, metaphors, hypothetical scenarios, suggestions, or probing questions must NEVER be misattributed to the client as their personal goals, behavioral patterns, or stakeholder views.
+- Extract ONLY client-owned statements:
+  * Longitudinal goals must represent commitments formulated, embraced, and owned by the [Client].
+  * Leadership patterns must reflect the [Client]'s demonstrated behaviors and self-identified challenges/strengths.
+  * Stakeholder dynamics must reflect the [Client]'s actual lived relationships and reporting structures.
+
+Extract structured insights in strict JSON format matching:
+{
+  "executive_summary": "2-3 concise paragraphs summarizing client themes, challenges, and shifts",
+  "stakeholders": [
+    {"name_or_role": "string", "relationship": "manager|peer|direct_report|board", "dynamics": "string"}
+  ],
+  "leadership_patterns": [
+    {"pattern": "string", "strength_or_blindspot": "strength|blindspot", "evidence": "string"}
+  ],
+  "longitudinal_goals": [
+    {"title": "string", "description": "string", "readiness_stage": "exploring|preparing|ready|practicing"}
+  ]
+}
+
+Session Title: {{ title }}
+Transcript snippet:
+{{ transcript }}
+
+Output ONLY valid JSON:

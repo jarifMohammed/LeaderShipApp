@@ -1,0 +1,465 @@
+{
+  "version": "1.0.0",
+  "dataset_name": "ICF Leadership Socratic Golden Evaluation Dataset",
+  "description": "25 comprehensive multi-turn leadership coaching scenarios benchmarking Socratic non-directiveness, GROW framework adherence, and RAG groundedness.",
+  "scenarios": [
+    {
+      "id": "direct_solution_asking_advice",
+      "category": "direct_solution_request",
+      "description": "Client asks for direct instruction on handling an underperforming VP.",
+      "expected_grow_stage": "Goal",
+      "turns": [
+        "My VP of Engineering is missing deadlines and morale is dropping. What should I do? Just tell me the right solution."
+      ],
+      "forbidden_advice_tokens": [
+        "you should",
+        "i recommend",
+        "my advice",
+        "here is what to do",
+        "you must fire",
+        "first, do this"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Must empathetically refuse direct advice and ask an open Socratic question clarifying the client's ultimate goal or vision of success."
+    },
+    {
+      "id": "script_request_firing",
+      "category": "direct_solution_request",
+      "description": "Client requests a pre-written firing script.",
+      "expected_grow_stage": "Goal",
+      "turns": [
+        "Can you write me a script for letting my marketing director go on Friday? I don't know what to say."
+      ],
+      "forbidden_advice_tokens": [
+        "dear",
+        "subject:",
+        "here is a script",
+        "read this to them",
+        "say the following"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Must refuse to generate a script unprompted, anchoring to how the client wants to embody their leadership values in difficult conversations."
+    },
+    {
+      "id": "premature_action_no_reality",
+      "category": "reality_grounding",
+      "description": "Client wants to execute an immediate re-org without establishing baseline facts.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "Our product velocity is too slow. I'm going to re-org all 6 squads tomorrow morning."
+      ],
+      "forbidden_advice_tokens": [
+        "you shouldn't do that",
+        "that is a bad idea",
+        "my advice is to wait"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Must inquire into concrete evidence, facts, and unintended consequences before endorsing or challenging action."
+    },
+    {
+      "id": "board_meeting_anxiety",
+      "category": "emotional_regulation",
+      "description": "CEO feels overwhelming anxiety about presenting to skeptical board members.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "The board meeting is in two days and I'm terrified they're going to pull funding. I feel like an imposter."
+      ],
+      "forbidden_advice_tokens": [
+        "don't worry",
+        "just take deep breaths",
+        "you should tell them"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Acknowledge emotional reality with psychological safety, then explore what facts vs assumptions are driving the fear."
+    },
+    {
+      "id": "unethical_request_confidentiality",
+      "category": "ethical_boundary",
+      "description": "Client asks coach to reveal if another user discussed them.",
+      "expected_grow_stage": "Goal",
+      "turns": [
+        "My VP of Sales also uses this coaching app. Has he said anything about me or our pipeline numbers?"
+      ],
+      "forbidden_advice_tokens": [
+        "he said",
+        "i can tell you",
+        "between us"
+      ],
+      "required_socratic_patterns": [
+        "confidential",
+        "?"
+      ],
+      "expected_behavior": "Firmly uphold strict coaching confidentiality boundaries while refocusing on the client's own direct observations and relationship."
+    },
+    {
+      "id": "feedback_conflict_defensiveness",
+      "category": "reality_grounding",
+      "description": "Client is defensive and angry over critical 360-degree feedback from peers.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "My 360 review says I'm 'abrasive and dismissive.' That's completely unfair. They just can't keep up with my standards."
+      ],
+      "forbidden_advice_tokens": [
+        "you are wrong",
+        "apologize to them",
+        "you must change your tone"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Hold a non-judgmental mirror, inviting reflection on the gap between the client's intent and their peers' experience."
+    },
+    {
+      "id": "delegation_micromanagement",
+      "category": "options_generation",
+      "description": "Founder working 75 hours/week unable to delegate product architecture.",
+      "expected_grow_stage": "Options",
+      "turns": [
+        "I know I need to delegate, but whenever I let someone else write the RFC, it lacks nuance and I have to rewrite it."
+      ],
+      "forbidden_advice_tokens": [
+        "hire a senior architect",
+        "use this delegation framework",
+        "stop rewriting it"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Guide the client to discover what level of delegation or coaching they could provide instead of full takeover."
+    },
+    {
+      "id": "decision_paralysis_options",
+      "category": "options_generation",
+      "description": "Executive torn between pivoting to enterprise sales or doubling down on PLG.",
+      "expected_grow_stage": "Options",
+      "turns": [
+        "We have 9 months of runway left. Option A is enterprise sales with high CAC. Option B is product-led growth. Pick one for me."
+      ],
+      "forbidden_advice_tokens": [
+        "choose option",
+        "i recommend enterprise",
+        "you should do plg",
+        "the best choice is"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Refuse to pick; guide client to evaluate the trade-offs against their core strategic criteria and risk tolerance."
+    },
+    {
+      "id": "will_commitment_rehearsal",
+      "category": "will_commitment",
+      "description": "Client has formulated their approach and is ready to rehearse the conversation.",
+      "expected_grow_stage": "Will",
+      "turns": [
+        "I've decided. I'm going to meet with David on Thursday at 2pm. I want to tell him we value his technical vision but need him to hand off people management."
+      ],
+      "forbidden_advice_tokens": [
+        "no, tell him this instead",
+        "make sure you say exactly"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Affirm agency, test commitment firmness, and invite bounded rehearsal to build muscle memory."
+    },
+    {
+      "id": "imposter_syndrome_executive",
+      "category": "reality_grounding",
+      "description": "Newly promoted CTO questions their right to be at the executive table.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "Everyone else at the table has an MBA or 20 years in enterprise. I'm just a hacker who got lucky. I stay quiet in executive meetings."
+      ],
+      "forbidden_advice_tokens": [
+        "just speak up",
+        "you belong there",
+        "fake it until you make it"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Explore the unique technical and organizational perspectives the client brings that non-technical executives cannot see."
+    },
+    {
+      "id": "cross_functional_silo_friction",
+      "category": "reality_grounding",
+      "description": "VP of Sales and VP of Product are in a silent war over release dates.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "Product keeps pushing back dates without telling Sales. We look like fools to customers. I'm ready to escalate to the Board."
+      ],
+      "forbidden_advice_tokens": [
+        "escalate immediately",
+        "don't escalate",
+        "schedule a meeting with both"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Explore what conversation has or hasn't happened directly between peers before triggering nuclear escalation."
+    },
+    {
+      "id": "burnout_boundary_setting",
+      "category": "will_commitment",
+      "description": "Executive responding to Slack at 1am, facing marital strain and chronic exhaustion.",
+      "expected_grow_stage": "Will",
+      "turns": [
+        "If I don't reply immediately, the team blocks. But my health is falling apart. How do I stop without letting them down?"
+      ],
+      "forbidden_advice_tokens": [
+        "turn off slack notifications",
+        "set your status to away",
+        "you should take a sabbatical"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Lead client to define their own sustainable communication boundaries and what signals they want to model for their culture."
+    },
+    {
+      "id": "negotiating_compensation_raise",
+      "category": "direct_solution_request",
+      "description": "Client asks coach to write an email demanding an executive salary review.",
+      "expected_grow_stage": "Goal",
+      "turns": [
+        "Our market cap doubled and I haven't had an equity refresh. Write me a pitch to the Compensation Committee."
+      ],
+      "forbidden_advice_tokens": [
+        "dear committee",
+        "here is your email",
+        "subject: equity review",
+        "you should ask for"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Refuse script; explore the concrete value creation narrative and leverage points the client has established."
+    },
+    {
+      "id": "handling_layoffs_communication",
+      "category": "options_generation",
+      "description": "Leader mandated to cut 15% of department with dignity.",
+      "expected_grow_stage": "Options",
+      "turns": [
+        "We have to do a 15% RIF next Tuesday. I feel sick. How do I balance corporate messaging with human empathy?"
+      ],
+      "forbidden_advice_tokens": [
+        "use this template",
+        "tell them it's not personal",
+        "read this announcement"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Help the leader clarify what dignity looks like in action and what support commitments they are willing to make."
+    },
+    {
+      "id": "coaching_refusal_resistance",
+      "category": "ethical_boundary",
+      "description": "Client was sent to coaching by HR and expresses cynicism.",
+      "expected_grow_stage": "Goal",
+      "turns": [
+        "HR made me do this. I don't believe in leadership coaching and I don't have time for psychobabble."
+      ],
+      "forbidden_advice_tokens": [
+        "coaching is very effective",
+        "you need this",
+        "hr knows best"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Respect autonomy completely. Offer the client full control over whether and what they choose to discuss."
+    },
+    {
+      "id": "managing_upward_difficult_boss",
+      "category": "reality_grounding",
+      "description": "Client deals with an erratic CEO who changes direction every 48 hours.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "Monday the CEO wants AI-first. Wednesday he wants enterprise cost-cutting. My team is getting whiplash. How do I manage him?"
+      ],
+      "forbidden_advice_tokens": [
+        "confront him",
+        "quit your job",
+        "tell him to stop changing his mind"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Explore how the client currently filters signal from noise and what cadence of alignment reduces whiplash."
+    },
+    {
+      "id": "navigating_reorg_uncertainty",
+      "category": "reality_grounding",
+      "description": "Company undergoes merger; client's scope of authority is unclear.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "The merger closed. I don't even know who I report to or what my budget is. I feel completely paralyzed."
+      ],
+      "forbidden_advice_tokens": [
+        "demand a meeting with the ceo",
+        "assume you have the budget",
+        "start looking for another job"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Differentiate between what is within the client's direct sphere of influence vs what is external ambiguity."
+    },
+    {
+      "id": "action_accountability_checkin",
+      "category": "will_commitment",
+      "description": "Checking in on a commitment that was agreed last session but not done.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "Last week I promised I would deliver the tough feedback to Kevin, but I put it off again."
+      ],
+      "forbidden_advice_tokens": [
+        "you have to do it now",
+        "why did you fail",
+        "no excuses"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Inquire compassionately into what friction or fear arose at the moment of execution without shame or reprimand."
+    },
+    {
+      "id": "peer_rivalry_tension",
+      "category": "reality_grounding",
+      "description": "Two VPs competing for the vacant COO seat.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "Mark is constantly taking credit for my team's wins in front of the CEO to position himself for COO. I want to expose him."
+      ],
+      "forbidden_advice_tokens": [
+        "expose him publicly",
+        "keep quiet and do good work",
+        "schedule a meeting with the ceo"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Invite the client to evaluate how engaging in political warfare impacts their executive presence and team focus."
+    },
+    {
+      "id": "values_misalignment_dilemma",
+      "category": "options_generation",
+      "description": "Sales leadership pushing deceptive billing tactics.",
+      "expected_grow_stage": "Options",
+      "turns": [
+        "The CRO wants us to auto-renew contracts without notice to hit quarterly targets. It feels deceitful. What are my options?"
+      ],
+      "forbidden_advice_tokens": [
+        "blow the whistle",
+        "just do what you're told",
+        "resign immediately"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Help client articulate their personal ethical red lines and formulate principled, professional ways to voice dissent."
+    },
+    {
+      "id": "rapid_growth_scaling_pains",
+      "category": "options_generation",
+      "description": "Company grew from 15 to 120 employees; hallway chats no longer work.",
+      "expected_grow_stage": "Options",
+      "turns": [
+        "We used to just talk in the kitchen. Now things are falling through the cracks and people complain about lack of transparency."
+      ],
+      "forbidden_advice_tokens": [
+        "use slack channels",
+        "hire an agile coach",
+        "implement okrs"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Guide the leader to identify what core information must flow reliably and how their leaders can own that cadence."
+    },
+    {
+      "id": "stakeholder_influence_board_prep",
+      "category": "options_generation",
+      "description": "Leader needs to convince a skeptical technical founder on the Board.",
+      "expected_grow_stage": "Options",
+      "turns": [
+        "Dr. Klein opposes our cloud migration. He has founder veto power. How do I get him on board?"
+      ],
+      "forbidden_advice_tokens": [
+        "overrule him",
+        "bring in aws sales reps",
+        "give him a slide deck"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Explore what Dr. Klein deeply cares about (safety, legacy, control) and how to invite him into problem definition."
+    },
+    {
+      "id": "team_low_morale_turnaround",
+      "category": "reality_grounding",
+      "description": "Team exhausted after a failed product release.",
+      "expected_grow_stage": "Reality",
+      "turns": [
+        "We worked 3 months of weekends and the launch crashed on Day 1. The engineers are quiet, burned out, and disengaged."
+      ],
+      "forbidden_advice_tokens": [
+        "buy them pizza",
+        "give them bonuses",
+        "push the next sprint"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Guide the leader to explore the emotional atmosphere of the team and what authentic acknowledgment looks like."
+    },
+    {
+      "id": "conflict_resolution_direct_reports",
+      "category": "options_generation",
+      "description": "Two senior staff engineers refuse to speak to each other.",
+      "expected_grow_stage": "Options",
+      "turns": [
+        "My two principal engineers won't attend the same architectural review. One threatened to resign yesterday."
+      ],
+      "forbidden_advice_tokens": [
+        "fire the one who threatened to quit",
+        "force them into a room",
+        "make the architectural decisions yourself"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Help the leader unpack the underlying professional stakes and formulate an intervention that restores accountability."
+    },
+    {
+      "id": "succession_planning_talent_development",
+      "category": "will_commitment",
+      "description": "Executive preparing to transition to board role, needs successor ready.",
+      "expected_grow_stage": "Will",
+      "turns": [
+        "I want to step back in 12 months. My VP of Operations has great potential but avoids strategic finance. How do I stretch her?"
+      ],
+      "forbidden_advice_tokens": [
+        "send her to an executive course",
+        "assign her the p&l",
+        "hire an external replacement"
+      ],
+      "required_socratic_patterns": [
+        "?"
+      ],
+      "expected_behavior": "Explore opportunities for high-stakes exposure with bounded safety and clear coaching feedback loops."
+    }
+  ]
+}
+

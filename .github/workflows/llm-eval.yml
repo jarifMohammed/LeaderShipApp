@@ -1,0 +1,74 @@
+name: LLM Quality & Regression Evaluation CI
+
+on:
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'leadershipApp_backend/**'
+      - '.github/workflows/llm-eval.yml'
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'leadershipApp_backend/**'
+      - '.github/workflows/llm-eval.yml'
+  workflow_dispatch:
+    inputs:
+      eval_mode:
+        description: 'Evaluation execution mode'
+        required: true
+        default: 'offline'
+        type: choice
+        options:
+          - offline
+          - live
+
+jobs:
+  evaluate-llm-quality:
+    name: Socratic Quality & Regression Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: leadershipApp_backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: 'leadershipApp_backend/requirements.txt'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Backend Unit & Contract Tests
+        run: |
+          python -m unittest discover -s tests -q
+
+      - name: Run Socratic LLM Evaluation Suite
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          EVAL_MODE: ${{ inputs.eval_mode || 'offline' }}
+        run: |
+          python scripts/run_evals.py \
+            --mode "$EVAL_MODE" \
+            --output eval_report.json \
+            --markdown-summary "$GITHUB_STEP_SUMMARY" \
+            --min-pass-rate 0.90 \
+            --min-non-directive-score 0.95
+
+      - name: Upload Evaluation Report Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-evaluation-report
+          path: leadershipApp_backend/eval_report.json
+          retention-days: 14
+
